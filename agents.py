@@ -1,3 +1,6 @@
+from openai import AsyncOpenAI
+
+
 class Agent:
     def __init__(self, name, instructions=None, tools=None, handoffs=None):
         self.name = name
@@ -13,12 +16,6 @@ class Agent:
             print(f"  Tools: {self.tools}")
         if self.handoffs:
             print(f"  Handoffs: {self.handoffs}")
-
-
-
-class RunResult:
-    def __init__(self, last_agent=None):
-        self.last_agent = last_agent
 
 
 class RunResult:
@@ -55,9 +52,6 @@ class Runner:
         return RunResult(last_agent=starting_agent, final_output=final_output)
 
 
-
-
-
 class OpenAIChatCompletionsModel:
     def __init__(self, model="gpt-3.5-turbo", openai_client=None):
         self.model = model
@@ -66,16 +60,11 @@ class OpenAIChatCompletionsModel:
     def complete(self, prompt):
         if self.openai_client:
             print(f"[{self.model}] Completing via provided OpenAI client with prompt: {prompt}")
-            # Here you could actually call the client, e.g.:
+            # Example call:
             # return self.openai_client.chat.completions.create(...)
         else:
             print(f"[{self.model}] No OpenAI client provided; dummy completion for: {prompt}")
         return "This is a dummy completion."
-
-
-
-
-    
 
 
 class RunConfig:
@@ -94,7 +83,6 @@ class RunConfig:
             print(f"  extra: {self.extra}")
 
 
-
 def handoff(agent, task=None, tool_name_override=None, tool_description_override=None):
     print(f"Handing off to agent '{agent.name}'")
 
@@ -108,3 +96,15 @@ def handoff(agent, task=None, tool_name_override=None, tool_description_override
         print(f"  Tool Description Override: {tool_description_override}")
 
     print("Handoff complete.")
+
+
+def function_tool(func):
+    """Decorator to mark a function as a tool."""
+    def wrapper(*args, **kwargs):
+        print(f"Executing tool: {func.__name__}")
+        return func(*args, **kwargs)
+    return wrapper
+
+
+def enable_verbose_stdout_logging():
+    print("Verbose stdout logging enabled.")
